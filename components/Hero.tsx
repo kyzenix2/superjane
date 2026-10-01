@@ -2,20 +2,13 @@
 
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
-import { AddToWalletButton, BuyButton, SocialButton } from "@/components/ui/Actions";
+import { BuyButton, SocialButton } from "@/components/ui/Actions";
 import { ContractBar } from "@/components/ui/ContractBar";
 import { MascotMark } from "@/components/ui/MascotMark";
 import { isLiveCa, site } from "@/lib/token";
 
 const ticker =
   "SUPER JANE   ·   $SJM   ·   BREAK THE TIMELINE   ·   DOMINATE THE MEMES   ·   LEGENDARY VIBES   ·   ";
-
-const stats = [
-  { label: "Price", value: "$—", hint: "Live on the chart" },
-  { label: "Market cap", value: "$—", hint: "DexScreener" },
-  { label: "Chain", value: "Solana", hint: "Fast lane" },
-  { label: "Status", value: "Live", hint: "Mint is public" },
-];
 
 function FloatingMascot() {
   const reduce = useReducedMotion();
@@ -74,14 +67,11 @@ export function Hero() {
 
         <ContractBar className="mx-auto mt-6 max-w-xl" compact />
 
-        <div className="mx-auto mt-3 flex max-w-xl flex-col gap-3 sm:flex-row">
-          <AddToWalletButton className="w-full sm:w-auto" />
-          <p className="self-center text-left text-xs leading-relaxed text-white/60 sm:flex-1 sm:text-right">
-            {live
-              ? "Buy opens pump.fun with SOL in and $SJM out."
-              : "Buy arms the second the mint is live. The ritual below is ready."}
-          </p>
-        </div>
+        <p className="mx-auto mt-3 max-w-xl text-xs leading-relaxed text-white/60">
+          {live
+            ? "Buy opens pump.fun with SOL in and $SJM out."
+            : "Buy arms the second the mint is live. The ritual below is ready."}
+        </p>
 
         <div className="mx-auto mt-5 flex w-full max-w-xl flex-col gap-3 sm:flex-row sm:justify-center">
           <BuyButton className="w-full sm:min-w-[180px] sm:flex-1" />
@@ -93,22 +83,14 @@ export function Hero() {
           </SocialButton>
         </div>
 
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {stats.map((stat) => (
-            <a
-              key={stat.label}
-              href="#charts"
-              className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-left transition hover:border-teal/40 hover:bg-teal/[0.06]"
-            >
-              <span className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/60">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-sunset" aria-hidden />
-                {stat.label}
-              </span>
-              <span className="mt-1 block font-display text-2xl font-bold text-white">{stat.value}</span>
-              <span className="mt-1 block text-xs text-white/60">{stat.hint}</span>
-            </a>
-          ))}
-        </div>
+        <p className="mt-4 inline-flex items-center justify-center gap-2 text-xs font-medium tracking-wide text-white/50">
+          <span>{site.chainLabel}</span>
+          <span aria-hidden>·</span>
+          <span className="inline-flex items-center gap-1.5">
+            <span className="h-1.5 w-1.5 rounded-full bg-teal" aria-hidden />
+            {live ? "Live" : "Suiting up"}
+          </span>
+        </p>
       </div>
 
       <div className="overflow-hidden border-y border-teal/20 bg-teal/10" aria-hidden="true">

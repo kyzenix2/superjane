@@ -31,23 +31,6 @@ async function copyText(value: string) {
   }
 }
 
-type SolanaProvider = {
-  isPhantom?: boolean;
-  connect: () => Promise<unknown>;
-  request?: (args: { method: string; params?: unknown }) => Promise<unknown>;
-};
-
-function getPhantom(): SolanaProvider | null {
-  if (typeof window === "undefined") return null;
-  const browser = window as Window & {
-    solana?: SolanaProvider;
-    phantom?: { solana?: SolanaProvider };
-  };
-  if (browser.phantom?.solana?.isPhantom) return browser.phantom.solana;
-  if (browser.solana?.isPhantom) return browser.solana;
-  return null;
-}
-
 function MotionLink({
   href,
   className,
@@ -164,68 +147,6 @@ export function CopyButton({ className }: { className?: string }) {
       {copied ? <Check className="h-4 w-4" aria-hidden /> : <Copy className="h-4 w-4" aria-hidden />}
       <span>{copied ? "Copied" : "Copy"}</span>
     </button>
-  );
-}
-
-export function AddToWalletButton({ className }: { className?: string }) {
-  const { toast } = useToast();
-  const reduce = useReducedMotion();
-  const [pending, setPending] = useState(false);
-
-  async function onAdd() {
-    if (!isLiveCa(site.ca)) {
-      toast("Add to Wallet unlocks when the mint goes live.");
-      return;
-    }
-
-    const provider = getPhantom();
-    if (!provider) {
-      window.open("https://phantom.app/download", "_blank", "noopener,noreferrer");
-      toast("Install Phantom in this browser, then hit Add to Wallet again.");
-      return;
-    }
-
-    setPending(true);
-    try {
-      await provider.connect();
-      const mint = site.ca.trim();
-      if (provider.request) {
-        try {
-          await provider.request({
-            method: "wallet_watchAsset",
-            params: { type: "SPL", options: { address: mint } },
-          });
-          toast("$SJM is pinned in Phantom.");
-          return;
-        } catch {
-          const ok = await copyText(mint);
-          toast(
-            ok
-              ? "Phantom is connected and the mint is copied. Pin $SJM from the token list."
-              : "Phantom is connected. Copy the contract and pin $SJM from the token list.",
-          );
-          return;
-        }
-      }
-      toast("Phantom is connected. Copy the contract and pin $SJM from the token list.");
-    } catch {
-      toast("Wallet connection closed. Add to Wallet is ready when you are.");
-    } finally {
-      setPending(false);
-    }
-  }
-
-  return (
-    <motion.button
-      type="button"
-      {...(reduce ? {} : tap)}
-      onClick={onAdd}
-      disabled={pending}
-      className={cta("secondary", cn("disabled:opacity-70", className))}
-    >
-      <Wallet className="h-4 w-4" aria-hidden />
-      {pending ? "Connecting" : "Add to Wallet"}
-    </motion.button>
   );
 }
 
